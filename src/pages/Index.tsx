@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getRandomWord, Difficulty } from '@/utils/wordList';
 import { 
@@ -159,7 +158,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <div className="game-container">
-        <h1 className="title">Juego del Ahorcado</h1>
         
         <div className="flex justify-between w-full mb-6">
           <div className="bg-secondary p-2 rounded-lg">
