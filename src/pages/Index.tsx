@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { getRandomWord, Difficulty } from '@/utils/wordList';
 import { 
@@ -176,21 +177,29 @@ const Index = () => {
         
         <PhaseIndicator currentPhase={currentPhase} />
         
-        <Hangman incorrectGuesses={incorrectGuessCount} />
-        
-        <WordDisplay 
-          word={word} 
-          guessedLetters={guessedLetters} 
-          gameOver={gameOver} 
-        />
-        
-        <Keyboard 
-          onGuess={handleGuess} 
-          guessedLetters={guessedLetters}
-          correctLetters={correctLetters}
-          incorrectLetters={incorrectLetters} 
-          disabled={gameOver}
-        />
+        <div className="flex flex-col md:flex-row w-full gap-8 items-center mb-8">
+          <div className="w-full md:w-1/2 order-2 md:order-1">
+            <Hangman incorrectGuesses={incorrectGuessCount} />
+          </div>
+          
+          <div className="w-full md:w-1/2 order-1 md:order-2 flex flex-col items-center">
+            <WordDisplay 
+              word={word} 
+              guessedLetters={guessedLetters} 
+              gameOver={gameOver} 
+            />
+            
+            <div className="mt-6 w-full">
+              <Keyboard 
+                onGuess={handleGuess} 
+                guessedLetters={guessedLetters}
+                correctLetters={correctLetters}
+                incorrectLetters={incorrectLetters} 
+                disabled={gameOver}
+              />
+            </div>
+          </div>
+        </div>
         
         {gameOver && (
           <GameOverModal 
@@ -207,7 +216,7 @@ const Index = () => {
             setScore(0);
             startNewGame(GamePhase.PHASE_1);
           }}
-          className="mt-8 bg-primary hover:bg-primary/90"
+          className="mt-4 bg-primary hover:bg-primary/90"
         >
           Reiniciar Juego
         </Button>

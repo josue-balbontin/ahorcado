@@ -10,8 +10,8 @@ const Hangman: React.FC<HangmanProps> = ({ incorrectGuesses }) => {
   const progress = incorrectGuesses / MAX_MISTAKES;
   
   return (
-    <div className="w-full max-w-xs mx-auto mb-8">
-      <svg viewBox="0 0 200 200" className="w-full h-auto">
+    <div className="w-full mx-auto">
+      <svg viewBox="0 0 200 200" className="w-full max-w-xs mx-auto h-auto">
         {/* Gallows */}
         <line x1="40" y1="180" x2="160" y2="180" className="hangman-part" />
         <line x1="60" y1="180" x2="60" y2="20" className="hangman-part" />

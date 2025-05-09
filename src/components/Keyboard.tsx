@@ -30,10 +30,10 @@ const Keyboard: React.FC<KeyboardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full mx-auto">
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className="flex justify-center gap-1 mb-2">
-          {rowIndex === 2 && <div className="w-5"></div>}
+          {rowIndex === 2 && <div className="w-3"></div>}
           {row.map((letter) => (
             <button
               key={letter}
@@ -44,7 +44,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
               {letter}
             </button>
           ))}
-          {rowIndex === 2 && <div className="w-5"></div>}
+          {rowIndex === 2 && <div className="w-3"></div>}
         </div>
       ))}
     </div>
