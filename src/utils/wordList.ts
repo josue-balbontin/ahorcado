@@ -1,19 +1,48 @@
 
-// Spanish word collection for the game
-export const WORDS = [
-  "CASA", "PERRO", "GATO", "ARBOL", "LIBRO",
-  "JUEGO", "FELIZ", "TIEMPO", "AGUA", "FUEGO",
-  "TIERRA", "AIRE", "AMIGO", "AMOR", "SOL",
-  "LUNA", "COMER", "BEBER", "DORMIR", "HABLAR",
-  "VIVIR", "MUNDO", "CIUDAD", "CAMPO", "MAR",
-  "PLAYA", "CIELO", "NUBE", "LLUVIA", "NIEVE",
-  "CALOR", "FRIO", "VERANO", "INVIERNO", "MUSICA",
-  "BAILE", "CINE", "TEATRO", "ESCUELA", "TRABAJO",
-  "DINERO", "FAMILIA", "PADRE", "MADRE", "HERMANO",
-  "HERMANA", "HIJO", "HIJA", "ABUELO", "ABUELA"
+// Colecciones de palabras relacionadas con software para el juego
+export const WORDS_EASY = [
+  "HTML", "JAVA", "PHP", "RUBY", "RUST", 
+  "DATO", "CODE", "BOOT", "LINK", "FILE",
+  "MENU", "BYTE", "CHAT", "BLOG", "GAME",
+  "TEXT", "ICON", "WIFI", "CLIP", "BYTE"
 ];
 
-// Get a random word from the list
-export const getRandomWord = (): string => {
-  return WORDS[Math.floor(Math.random() * WORDS.length)];
+export const WORDS_MEDIUM = [
+  "PYTHON", "SCRIPT", "GITHUB", "NUBE", "ARRAY", 
+  "CODIGO", "FUNCION", "CLASE", "MÉTODO", "DATOS",
+  "SERVIDOR", "CLIENTE", "BUCLE", "PROXY", "BACKUP",
+  "DOCKER", "PLUGIN", "SCRUM", "LIBRERÍA", "VISTA"
+];
+
+export const WORDS_HARD = [
+  "FRAMEWORK", "ALGORITMO", "SOFTWARE", "FRONTEND", "BACKEND", 
+  "RECURSIVIDAD", "TYPESCRIPT", "COMPILADOR", "DEPURADOR", "ANALÍTICA",
+  "JAVASCRIPT", "PROTOTIPO", "VIRTUALIZACIÓN", "MICROSERVICIO", "CONTENEDOR",
+  "RENDERIZADO", "ENCRIPTACIÓN", "MIDDLEWARE", "INFRAESTRUCTURA", "ESCALABILIDAD"
+];
+
+// Niveles de dificultad
+export enum Difficulty {
+  EASY = "easy",
+  MEDIUM = "medium",
+  HARD = "hard"
+}
+
+// Obtener una palabra aleatoria según la dificultad
+export const getRandomWord = (difficulty: Difficulty): string => {
+  let wordList: string[] = WORDS_EASY;
+  
+  switch (difficulty) {
+    case Difficulty.EASY:
+      wordList = WORDS_EASY;
+      break;
+    case Difficulty.MEDIUM:
+      wordList = WORDS_MEDIUM;
+      break;
+    case Difficulty.HARD:
+      wordList = WORDS_HARD;
+      break;
+  }
+  
+  return wordList[Math.floor(Math.random() * wordList.length)];
 };

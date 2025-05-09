@@ -1,16 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-import { getRandomWord } from '@/utils/wordList';
-import { checkLetter, checkWin, checkLoss, getIncorrectGuessCount } from '@/utils/gameLogic';
+import { getRandomWord, Difficulty } from '@/utils/wordList';
+import { 
+  checkLetter, 
+  checkWin, 
+  checkLoss, 
+  getIncorrectGuessCount,
+  GamePhase,
+  getNextPhase,
+  isGameCompleted
+} from '@/utils/gameLogic';
 import Hangman from '@/components/Hangman';
 import WordDisplay from '@/components/WordDisplay';
 import Keyboard from '@/components/Keyboard';
 import GameOverModal from '@/components/GameOverModal';
+import PhaseIndicator from '@/components/PhaseIndicator';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
 const Index = () => {
-  // Game state
+  // Estado del juego
   const [word, setWord] = useState('');
   const [guessedLetters, setGuessedLetters] = useState<Set<string>>(new Set());
   const [correctLetters, setCorrectLetters] = useState<Set<string>>(new Set());
@@ -19,15 +28,34 @@ const Index = () => {
   const [highScore, setHighScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isWin, setIsWin] = useState(false);
+  const [currentPhase, setCurrentPhase] = useState<GamePhase>(GamePhase.PHASE_1);
   
-  // Get a random word on first render and when starting a new game
+  // Iniciar juego al cargar
   useEffect(() => {
     startNewGame();
   }, []);
 
-  // Start a new game
-  const startNewGame = () => {
-    const newWord = getRandomWord();
+  // Iniciar un nuevo juego o fase
+  const startNewGame = (newPhase?: GamePhase) => {
+    const phase = newPhase || currentPhase;
+    let difficulty: Difficulty;
+    
+    // Seleccionar dificultad según fase
+    switch (phase) {
+      case GamePhase.PHASE_1:
+        difficulty = Difficulty.EASY;
+        break;
+      case GamePhase.PHASE_2:
+        difficulty = Difficulty.MEDIUM;
+        break;
+      case GamePhase.PHASE_3:
+        difficulty = Difficulty.HARD;
+        break;
+      default:
+        difficulty = Difficulty.EASY;
+    }
+    
+    const newWord = getRandomWord(difficulty);
     setWord(newWord);
     setGuessedLetters(new Set());
     setCorrectLetters(new Set());
@@ -35,18 +63,22 @@ const Index = () => {
     setGameOver(false);
     setIsWin(false);
     
-    console.log('New word:', newWord); // For debugging
+    if (newPhase) {
+      setCurrentPhase(newPhase);
+    }
+    
+    console.log('New word:', newWord); // Para depuración
   };
 
-  // Handle letter guess
+  // Manejar adivinanza de letra
   const handleGuess = (letter: string) => {
     if (gameOver || guessedLetters.has(letter)) return;
     
-    // Add to guessed letters
+    // Añadir a letras adivinadas
     const newGuessedLetters = new Set(guessedLetters).add(letter);
     setGuessedLetters(newGuessedLetters);
     
-    // Check if letter is in the word
+    // Verificar si la letra está en la palabra
     const isCorrect = checkLetter(word, letter);
     
     if (isCorrect) {
@@ -66,17 +98,24 @@ const Index = () => {
       });
     }
     
-    // Check for win/loss conditions
+    // Verificar condiciones de victoria/derrota
     checkGameStatus(newGuessedLetters);
   };
   
-  // Check if game is won or lost
+  // Verificar si el juego ha terminado
   const checkGameStatus = (letters: Set<string>) => {
     if (checkWin(word, letters)) {
       setGameOver(true);
       setIsWin(true);
-      const newScore = score + 10;
+      
+      // Actualizar puntuación según la fase
+      let pointsForWin = 10;
+      if (currentPhase === GamePhase.PHASE_2) pointsForWin = 20;
+      if (currentPhase === GamePhase.PHASE_3) pointsForWin = 30;
+      
+      const newScore = score + pointsForWin;
       setScore(newScore);
+      
       if (newScore > highScore) {
         setHighScore(newScore);
       }
@@ -87,16 +126,38 @@ const Index = () => {
     }
   };
   
-  // Handle play again
+  // Manejar jugar de nuevo
   const handlePlayAgain = () => {
-    startNewGame();
+    if (isWin && currentPhase < GamePhase.COMPLETED) {
+      // Avanzar a la siguiente fase
+      const nextPhase = getNextPhase(currentPhase);
+      startNewGame(nextPhase);
+    } else {
+      // Reiniciar desde la fase 1
+      setScore(0);
+      startNewGame(GamePhase.PHASE_1);
+    }
   };
   
-  // Get count of incorrect guesses
+  // Obtener conteo de adivinanzas incorrectas
   const incorrectGuessCount = getIncorrectGuessCount(word, guessedLetters);
+
+  // Determinar el nivel de dificultad actual en formato de texto
+  const getCurrentDifficulty = () => {
+    switch (currentPhase) {
+      case GamePhase.PHASE_1:
+        return "Fácil";
+      case GamePhase.PHASE_2:
+        return "Medio";
+      case GamePhase.PHASE_3:
+        return "Difícil";
+      default:
+        return "Completado";
+    }
+  };
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <div className="game-container">
         <h1 className="title">Juego del Ahorcado</h1>
         
@@ -106,10 +167,16 @@ const Index = () => {
             <p className="text-xl font-bold">{score}</p>
           </div>
           <div className="bg-secondary p-2 rounded-lg">
+            <p className="text-sm">Dificultad</p>
+            <p className="text-xl font-bold">{getCurrentDifficulty()}</p>
+          </div>
+          <div className="bg-secondary p-2 rounded-lg">
             <p className="text-sm">Mejor Puntuación</p>
             <p className="text-xl font-bold">{highScore}</p>
           </div>
         </div>
+        
+        <PhaseIndicator currentPhase={currentPhase} />
         
         <Hangman incorrectGuesses={incorrectGuessCount} />
         
@@ -131,16 +198,20 @@ const Index = () => {
           <GameOverModal 
             isWin={isWin} 
             word={word} 
-            onPlayAgain={handlePlayAgain} 
-            score={score} 
+            onPlayAgain={handlePlayAgain}
+            score={score}
+            currentPhase={currentPhase}
           />
         )}
         
         <Button 
-          onClick={handlePlayAgain}
+          onClick={() => {
+            setScore(0);
+            startNewGame(GamePhase.PHASE_1);
+          }}
           className="mt-8 bg-primary hover:bg-primary/90"
         >
-          Nueva Palabra
+          Reiniciar Juego
         </Button>
       </div>
     </div>
