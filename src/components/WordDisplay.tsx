@@ -11,7 +11,8 @@ const WordDisplay: React.FC<WordDisplayProps> = ({ word, guessedLetters, gameOve
   return (
     <div className="flex justify-center flex-wrap gap-1 mb-8">
       {[...word].map((letter, index) => {
-        const isRevealed = guessedLetters.has(letter) || gameOver;
+        // Mostrar las dos primeras letras desde el inicio o letras adivinadas o cuando el juego termina
+        const isRevealed = index < 2 || guessedLetters.has(letter) || gameOver;
         return (
           <div key={index} className="word-letter">
             {isRevealed ? letter : ''}
