@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { getRandomWord, Difficulty } from '@/utils/wordList';
-import { 
-  checkLetter, 
-  checkWin, 
-  checkLoss, 
+import {
+  checkLetter,
+  checkWin,
+  checkLoss,
   getIncorrectGuessCount,
   GamePhase,
   getNextPhase,
@@ -29,7 +29,7 @@ const Index = () => {
   const [gameOver, setGameOver] = useState(false);
   const [isWin, setIsWin] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<GamePhase>(GamePhase.PHASE_1);
-  
+
   // Iniciar juego al cargar
   useEffect(() => {
     startNewGame();
@@ -39,7 +39,7 @@ const Index = () => {
   const startNewGame = (newPhase?: GamePhase) => {
     const phase = newPhase || currentPhase;
     let difficulty: Difficulty;
-    
+
     // Seleccionar dificultad según fase
     switch (phase) {
       case GamePhase.PHASE_1:
@@ -54,33 +54,39 @@ const Index = () => {
       default:
         difficulty = Difficulty.EASY;
     }
-    
+
     const newWord = getRandomWord(difficulty);
     setWord(newWord);
-    setGuessedLetters(new Set());
-    setCorrectLetters(new Set());
+
+    // Pre-agregar las letras de pista (primeras 2) como ya adivinadas
+    const hintLetters = new Set<string>();
+    for (let i = 0; i < Math.min(2, newWord.length); i++) {
+      hintLetters.add(newWord[i]);
+    }
+    setGuessedLetters(new Set(hintLetters));
+    setCorrectLetters(new Set(hintLetters));
     setIncorrectLetters(new Set());
     setGameOver(false);
     setIsWin(false);
-    
+
     if (newPhase) {
       setCurrentPhase(newPhase);
     }
-    
+
     console.log('New word:', newWord); // Para depuración
   };
 
   // Manejar adivinanza de letra
   const handleGuess = (letter: string) => {
     if (gameOver || guessedLetters.has(letter)) return;
-    
+
     // Añadir a letras adivinadas
     const newGuessedLetters = new Set(guessedLetters).add(letter);
     setGuessedLetters(newGuessedLetters);
-    
+
     // Verificar si la letra está en la palabra
     const isCorrect = checkLetter(word, letter);
-    
+
     if (isCorrect) {
       const newCorrectLetters = new Set(correctLetters).add(letter);
       setCorrectLetters(newCorrectLetters);
@@ -97,25 +103,25 @@ const Index = () => {
         duration: 1500,
       });
     }
-    
+
     // Verificar condiciones de victoria/derrota
     checkGameStatus(newGuessedLetters);
   };
-  
+
   // Verificar si el juego ha terminado
   const checkGameStatus = (letters: Set<string>) => {
     if (checkWin(word, letters)) {
       setGameOver(true);
       setIsWin(true);
-      
+
       // Actualizar puntuación según la fase
       let pointsForWin = 10;
       if (currentPhase === GamePhase.PHASE_2) pointsForWin = 20;
       if (currentPhase === GamePhase.PHASE_3) pointsForWin = 30;
-      
+
       const newScore = score + pointsForWin;
       setScore(newScore);
-      
+
       if (newScore > highScore) {
         setHighScore(newScore);
       }
@@ -125,7 +131,7 @@ const Index = () => {
       setScore(0);
     }
   };
-  
+
   // Manejar jugar de nuevo
   const handlePlayAgain = () => {
     if (isWin && currentPhase < GamePhase.COMPLETED) {
@@ -138,7 +144,7 @@ const Index = () => {
       startNewGame(GamePhase.PHASE_1);
     }
   };
-  
+
   // Obtener conteo de adivinanzas incorrectas
   const incorrectGuessCount = getIncorrectGuessCount(word, guessedLetters);
 
@@ -155,11 +161,11 @@ const Index = () => {
         return "Completado";
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <div className="game-container">
-        
+
         <div className="flex justify-between w-full mb-6">
           <div className="bg-secondary p-2 rounded-lg">
             <p className="text-sm">Puntuación Actual</p>
@@ -174,44 +180,44 @@ const Index = () => {
             <p className="text-xl font-bold">{highScore}</p>
           </div>
         </div>
-        
+
         <PhaseIndicator currentPhase={currentPhase} />
-        
+
         <div className="flex flex-col md:flex-row w-full gap-8 items-center mb-8">
           <div className="w-full md:w-1/2 order-2 md:order-1">
             <Hangman incorrectGuesses={incorrectGuessCount} />
           </div>
-          
+
           <div className="w-full md:w-1/2 order-1 md:order-2 flex flex-col items-center">
-            <WordDisplay 
-              word={word} 
-              guessedLetters={guessedLetters} 
-              gameOver={gameOver} 
+            <WordDisplay
+              word={word}
+              guessedLetters={guessedLetters}
+              gameOver={gameOver}
             />
-            
+
             <div className="mt-6 w-full">
-              <Keyboard 
-                onGuess={handleGuess} 
+              <Keyboard
+                onGuess={handleGuess}
                 guessedLetters={guessedLetters}
                 correctLetters={correctLetters}
-                incorrectLetters={incorrectLetters} 
+                incorrectLetters={incorrectLetters}
                 disabled={gameOver}
               />
             </div>
           </div>
         </div>
-        
+
         {gameOver && (
-          <GameOverModal 
-            isWin={isWin} 
-            word={word} 
+          <GameOverModal
+            isWin={isWin}
+            word={word}
             onPlayAgain={handlePlayAgain}
             score={score}
             currentPhase={currentPhase}
           />
         )}
-        
-        <Button 
+
+        <Button
           onClick={() => {
             setScore(0);
             startNewGame(GamePhase.PHASE_1);

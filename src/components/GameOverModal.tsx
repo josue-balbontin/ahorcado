@@ -12,12 +12,12 @@ interface GameOverModalProps {
   currentPhase: GamePhase;
 }
 
-const GameOverModal: React.FC<GameOverModalProps> = ({ 
-  isWin, 
-  word, 
-  onPlayAgain, 
+const GameOverModal: React.FC<GameOverModalProps> = ({
+  isWin,
+  word,
+  onPlayAgain,
   score,
-  currentPhase 
+  currentPhase
 }) => {
   const gameCompleted = isGameCompleted(currentPhase);
   const nextPhase = currentPhase < GamePhase.COMPLETED ? currentPhase : GamePhase.COMPLETED;
@@ -42,7 +42,7 @@ const GameOverModal: React.FC<GameOverModalProps> = ({
           <p className="mb-2">La palabra era:</p>
           <p className="text-xl font-bold mb-4">{word}</p>
           <p className="mb-4">Puntuación: {score}</p>
-          
+
           {isWin && !gameCompleted && (
             <div className="mb-4">
               <p className="mb-2">¡Pasando a la Fase {nextPhase}!</p>
