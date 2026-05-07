@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getRandomWord, Difficulty } from '@/utils/wordList';
 import {
   checkLetter,
@@ -19,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
 const Index = () => {
+  const navigate = useNavigate();
   // Estado del juego
   const [word, setWord] = useState('');
   const [guessedLetters, setGuessedLetters] = useState<Set<string>>(new Set());
@@ -225,6 +227,13 @@ const Index = () => {
           className="mt-4 bg-primary hover:bg-primary/90"
         >
           Reiniciar Juego
+        </Button>
+
+        <Button
+          onClick={() => navigate('/voting?host=true')}
+          className="mt-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+        >
+          🎮 Modo Votación Multijugador
         </Button>
       </div>
     </div>
