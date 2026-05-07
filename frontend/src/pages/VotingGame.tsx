@@ -6,7 +6,7 @@ import VotingPanel from '@/components/VotingPanel';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
-const API_BASE = `http://${window.location.hostname}:8000`;
+const API_BASE = `http://${window.location.hostname}:${__BACKEND_PORT__}`;
 
 interface GameState {
   players: Array<{ name: string; is_host: boolean; has_voted: boolean }>;
@@ -43,7 +43,7 @@ const VotingGame: React.FC = () => {
   const [qrData, setQrData] = useState<{ qr_code: string; join_url: string } | null>(null);
 
   // WebSocket
-  const wsUrl = `ws://${window.location.hostname}:8000/ws?host=${isHost}`;
+  const wsUrl = `ws://${window.location.hostname}:${__BACKEND_PORT__}/ws?host=${isHost}`;
   const { connected, sendMessage, lastMessage } = useWebSocket(wsUrl);
 
   // Cargar QR

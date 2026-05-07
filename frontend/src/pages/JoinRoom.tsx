@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
-const API_BASE = `http://${window.location.hostname}:8000`;
+const API_BASE = `http://${window.location.hostname}:${__BACKEND_PORT__}`;
 
 const JoinRoom: React.FC = () => {
   const navigate = useNavigate();

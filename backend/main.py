@@ -252,7 +252,7 @@ def generate_qr_base64(url: str) -> str:
 
 
 @app.get("/api/game-info")
-async def get_game_info(frontend_port: int = Query(default=8080)):
+async def get_game_info(frontend_port: int = Query(default=5173)):
     """Devuelve info del juego y QR con el puerto correcto del frontend."""
     ip = get_local_ip()
     join_url = f"http://{ip}:{frontend_port}/voting"
@@ -441,11 +441,38 @@ async def websocket_endpoint(websocket: WebSocket, host: bool = Query(default=Fa
 
 # ---- Arrancar servidor ----
 
+def find_free_port(start: int = 8000, end: int = 8020) -> int:
+    """Busca un puerto libre en el rango [start, end]."""
+    import socket as _socket
+    for port in range(start, end + 1):
+        try:
+            s = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
+            s.bind(("0.0.0.0", port))
+            s.close()
+            return port
+        except OSError:
+            continue
+    # Si ninguno esta libre, dejar que uvicorn falle con el default
+    return start
+
+
+def save_backend_port(port: int):
+    """Guarda el puerto del backend en un archivo compartido para que el frontend lo lea."""
+    import os
+    port_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "backend_port.json")
+    with open(port_file, "w") as f:
+        json.dump({"port": port}, f)
+    print(f"  Puerto guardado en: {os.path.abspath(port_file)}")
+
+
 if __name__ == "__main__":
     import uvicorn
     ip = get_local_ip()
+    port = find_free_port(8000, 8020)
+    save_backend_port(port)
     print(f"\n{'='*50}")
     print(f"  Ahorcado - Modo Votacion")
-    print(f"  Servidor: http://{ip}:8000")
+    print(f"  Servidor: http://{ip}:{port}")
+    print(f"  (puerto auto-detectado)")
     print(f"{'='*50}\n")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=port)
