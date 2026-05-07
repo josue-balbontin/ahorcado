@@ -1,24 +1,24 @@
 
 // Colecciones de palabras relacionadas con software para el juego
 export const WORDS_EASY = [
-  "HTML", "JAVA", "PHP", "RUBY", "RUST", 
+  "HTML", "JAVA", "RUBY", "RUST", "NODO",
   "DATO", "CODE", "BOOT", "LINK", "FILE",
   "MENU", "BYTE", "CHAT", "BLOG", "GAME",
-  "TEXT", "ICON", "WIFI", "CLIP", "BYTE"
+  "TEXT", "ICON", "WIFI", "CLIP", "PORT"
 ];
 
 export const WORDS_MEDIUM = [
-  "PYTHON", "SCRIPT", "GITHUB", "NUBE", "ARRAY", 
-  "CODIGO", "FUNCION", "CLASE", "MÉTODO", "DATOS",
+  "PYTHON", "SCRIPT", "GITHUB", "NUBE", "ARRAY",
+  "CODIGO", "FUNCION", "CLASE", "MODELO", "DATOS",
   "SERVIDOR", "CLIENTE", "BUCLE", "PROXY", "BACKUP",
-  "DOCKER", "PLUGIN", "SCRUM", "LIBRERÍA", "VISTA"
+  "DOCKER", "PLUGIN", "SCRUM", "MODULO", "VISTA"
 ];
 
 export const WORDS_HARD = [
-  "FRAMEWORK", "ALGORITMO", "SOFTWARE", "FRONTEND", "BACKEND", 
-  "RECURSIVIDAD", "TYPESCRIPT", "COMPILADOR", "DEPURADOR", "ANALÍTICA",
-  "JAVASCRIPT", "PROTOTIPO", "VIRTUALIZACIÓN", "MICROSERVICIO", "CONTENEDOR",
-  "RENDERIZADO", "ENCRIPTACIÓN", "MIDDLEWARE", "INFRAESTRUCTURA", "ESCALABILIDAD"
+  "FRAMEWORK", "ALGORITMO", "SOFTWARE", "FRONTEND", "BACKEND",
+  "RECURSIVIDAD", "TYPESCRIPT", "COMPILADOR", "DEPURADOR", "BINARIO",
+  "JAVASCRIPT", "PROTOTIPO", "PROCESADOR", "MICROSERVICIO", "CONTENEDOR",
+  "RENDERIZADO", "ENCRIPTACION", "MIDDLEWARE", "INFRAESTRUCTURA", "ESCALABILIDAD"
 ];
 
 // Niveles de dificultad
@@ -31,7 +31,7 @@ export enum Difficulty {
 // Obtener una palabra aleatoria según la dificultad
 export const getRandomWord = (difficulty: Difficulty): string => {
   let wordList: string[] = WORDS_EASY;
-  
+
   switch (difficulty) {
     case Difficulty.EASY:
       wordList = WORDS_EASY;
@@ -43,6 +43,6 @@ export const getRandomWord = (difficulty: Difficulty): string => {
       wordList = WORDS_HARD;
       break;
   }
-  
+
   return wordList[Math.floor(Math.random() * wordList.length)];
 };
